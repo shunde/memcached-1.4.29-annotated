@@ -4828,6 +4828,7 @@ void event_handler(const int fd, const short which, void *arg) {
         return;
     }
 
+    // 请求处理状态机
     drive_machine(c);
 
     /* wait for next event */
@@ -5630,7 +5631,7 @@ int main (int argc, char **argv) {
     // 如果对如下字符指针数组的初始化方式感到困惑，请往下阅读
     // Designated Initializers 指定初始化
     // 需要 ISO C99 支持
-    // 关于指定初始化的更多细节参见 https://gcc.gnu.org/onlinedocs/gcc/Designated-Inits.html#Designated-Inits 
+    // 关于指定初始化的更多细节参见 https://gcc.gnu.org/onlinedocs/gcc/Designated-Inits.html#Designated-Inits
     char *const subopts_tokens[] = {
         [MAXCONNS_FAST] = "maxconns_fast",
         [HASHPOWER_INIT] = "hashpower",
