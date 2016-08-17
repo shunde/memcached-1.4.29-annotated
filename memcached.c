@@ -4127,6 +4127,7 @@ static int try_read_command(conn *c) {
         if (c->rbytes == 0)
             return 0;
 
+        // 同 strchr，memchr多一个参数，二进制兼容
         el = memchr(c->rcurr, '\n', c->rbytes);
         if (!el) {
             if (c->rbytes > 1024) {
