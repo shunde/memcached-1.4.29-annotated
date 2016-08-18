@@ -28,7 +28,7 @@ static volatile int do_run_logger_thread = 1;
 static pthread_t logger_tid;
 pthread_mutex_t logger_stack_lock = PTHREAD_MUTEX_INITIALIZER;
 
-pthread_key_t logger_key;
+pthread_key_t logger_key;  // 线程本地存储，存储指向日志 logger 的指针
 
 #if !defined(HAVE_GCC_64ATOMICS) && !defined(__sun)
 pthread_mutex_t logger_atomics_mutex = PTHREAD_MUTEX_INITIALIZER;
@@ -56,17 +56,20 @@ static int logger_thread_poll_watchers(int force_poll, int watcher);
 /*************************
  * Util functions shared between bg thread and workers
  *************************/
-
+/*************************
+ * 建立URI编码映射表
+ * 编码规则见：https://en.wikipedia.org/wiki/Percent-encoding
+ ************************/
 static void logger_uriencode_init(void) {
     int x;
     char *str = logger_uriencode_str;
     for (x = 0; x < 256; x++) {
-        if (isalnum(x) || x == '-' || x == '.' || x == '_' || x == '~') {
+        if (isalnum(x) || x == '-' || x == '.' || x == '_' || x == '~') {  /* 非保留字符 */
             logger_uriencode_map[x] = NULL;
         } else {
             snprintf(str, 4, "%%%02X", x);
             logger_uriencode_map[x] = str;
-            str += 3; /* lobbing off the \0 is fine */
+            str += 3; /* lobbing off the \0 is fine */ /* 覆盖掉 \0 */
         }
     }
 }
@@ -75,7 +78,7 @@ static bool logger_uriencode(const char *src, char *dst, const size_t srclen, co
     int x;
     size_t d = 0;
     for (x = 0; x < srclen; x++) {
-        if (d + 4 >= dstlen)
+        if (d + 4 >= dstlen)  /* 目的字符串空间不足，3个字符＋null */
             return false;
         if (logger_uriencode_map[(unsigned char) src[x]] != NULL) {
             memcpy(&dst[d], logger_uriencode_map[(unsigned char) src[x]], 3);

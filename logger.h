@@ -98,7 +98,7 @@ typedef struct _logger {
     uint16_t fetcher_ratio; /* log one out of every N fetches */
     uint16_t mutation_ratio; /* log one out of every N mutations */
     uint16_t eflags; /* flags this logger should log */
-    bipbuf_t *buf;
+    bipbuf_t *buf; /* 高效的两段式循环缓冲区 BipBuffer */
     const entry_details *entry_map;
 } logger;
 
@@ -133,6 +133,11 @@ extern pthread_key_t logger_key;
 void logger_init(void);
 logger *logger_create(void);
 
+/**
+ * 使用 do {...} while(0) 构造的宏定义不受大括号、分号等影响，总是按你期望的方式运行。
+ * 在 Linux 和其他代码库里经常被用到。
+ * 解释见：http://stackoverflow.com/questions/257418/do-while-0-what-is-it-good-for
+ */
 #define LOGGER_LOG(l, flag, type, ...) \
     do { \
         logger *myl = l; \

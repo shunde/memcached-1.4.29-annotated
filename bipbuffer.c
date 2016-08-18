@@ -7,6 +7,13 @@
  * @author  Willem Thiart himself@willemthiart.com
  */
 
+/**
+ * BipBuffer —— 高效的两段式循环缓冲区
+ *
+ * @author  Simon Cook 原作者
+ * @url     http://www.codeproject.com/Articles/3479/The-Bip-Buffer-The-Circular-Buffer-with-a-Twist
+ */
+
 #include "stdio.h"
 #include <stdlib.h>
 
