@@ -3158,6 +3158,7 @@ static inline void process_get_command(conn *c, token_t *tokens, size_t ntokens,
 
             if(nkey > KEY_MAX_LENGTH) {
                 out_string(c, "CLIENT_ERROR bad command line format");
+                // 撤销已添加的项
                 while (i-- > 0) {
                     item_remove(*(c->ilist + i));
                 }
